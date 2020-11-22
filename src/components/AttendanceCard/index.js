@@ -13,7 +13,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
-
+import ReminderDialog from '../ReminderDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +74,7 @@ const AttendanceCard = () => {
                         onClose={handleClose}
                         TransitionComponent={Fade}
                     >
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Add Reminder</MenuItem>
+                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}><ReminderDialog/></MenuItem>
                         <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Delete Card</MenuItem>
                     </Menu>
                 </Header>

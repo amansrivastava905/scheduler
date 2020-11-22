@@ -4,6 +4,8 @@ import AttendanceCard from '../components/AttendanceCard'
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import AttendanceImage from '../images/attendance.svg';
+
+
 const useStyles = makeStyles((theme) => ({
    container:{
        padding:'5px',
