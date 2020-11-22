@@ -43,7 +43,7 @@ const ButtonContainer = styled.div`
 `
 
 const ImageContainer = styled.div`
-    padding:10px;
+    padding:10px 10px;
     display:flex;
     justify-content:center;
 `
