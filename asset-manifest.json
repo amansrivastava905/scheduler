@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/scheduler/static/css/main.df7b5aae.chunk.css",
+    "main.js": "/scheduler/static/js/main.3bb77734.chunk.js",
+    "main.js.map": "/scheduler/static/js/main.3bb77734.chunk.js.map",
+    "runtime-main.js": "/scheduler/static/js/runtime-main.f99b4ae2.js",
+    "runtime-main.js.map": "/scheduler/static/js/runtime-main.f99b4ae2.js.map",
+    "static/js/2.e6e21d90.chunk.js": "/scheduler/static/js/2.e6e21d90.chunk.js",
+    "static/js/2.e6e21d90.chunk.js.map": "/scheduler/static/js/2.e6e21d90.chunk.js.map",
+    "index.html": "/scheduler/index.html",
+    "static/css/main.df7b5aae.chunk.css.map": "/scheduler/static/css/main.df7b5aae.chunk.css.map",
+    "static/js/2.e6e21d90.chunk.js.LICENSE.txt": "/scheduler/static/js/2.e6e21d90.chunk.js.LICENSE.txt",
+    "static/media/attendance.efaca751.svg": "/scheduler/static/media/attendance.efaca751.svg",
+    "static/media/default-profile.397210dc.svg": "/scheduler/static/media/default-profile.397210dc.svg",
+    "static/media/error.c3547a99.svg": "/scheduler/static/media/error.c3547a99.svg",
+    "static/media/landing.2cccf73b.svg": "/scheduler/static/media/landing.2cccf73b.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f99b4ae2.js",
+    "static/js/2.e6e21d90.chunk.js",
+    "static/css/main.df7b5aae.chunk.css",
+    "static/js/main.3bb77734.chunk.js"
+  ]
+}
