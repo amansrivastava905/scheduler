@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CheckCircleOutlineSharpIcon from '@material-ui/icons/CheckCircleOutlineSharp';
-import NotInterestedSharpIcon from '@material-ui/icons/NotInterestedSharp';
+// import NotInterestedSharpIcon from '@material-ui/icons/NotInterestedSharp';
 import CancelSharpIcon from '@material-ui/icons/CancelSharp';
 import Zoom from '@material-ui/core/Zoom';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -15,15 +15,18 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
 import ReminderDialog from '../ReminderDialog';
 
-
+// styles for material ui
 const useStyles = makeStyles((theme) => ({
     container: {
         padding: '0px',
         margin: '10px',
-        minWidth: '300px',
+        width:'350px',
         minHeight: '100px',
         overflow: 'hidden',
-        borderRadius: '5px'
+        borderRadius: '5px',
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: "column",
     },
     Typography: {
         color: 'white',
@@ -35,20 +38,31 @@ const useStyles = makeStyles((theme) => ({
         color: 'white',
     },
     visualAttendance: {
-        height: '3px',
+        height: '3px'
     },
-    SubMenuItem:{
-        fontSize:'12px'
+    SubMenuItem: {
+        fontSize: '12px'
+    },
+    accentBlue:{
+        backgroundColor:"#3f51b5"
+    },
+    accentRed:{
+        backgroundColor:"#f44336"
     }
 }));
 
+
+// main component
 const AttendanceCard = () => {
 
+    // styles fro material ui
     const classes = useStyles();
 
+    // state for material component
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
 
+    // functions to mange state for material components
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -57,12 +71,65 @@ const AttendanceCard = () => {
         setAnchorEl(null);
     };
 
+    // initial state of card(will be coming from database)
+    const data = {
+        subject: "Fluid Mechanics",
+        present: 10,
+        total: 12
+    }
+
+    // state hooks for present and total
+    const [present, setPresent] = useState(data.present);
+    const [total, setTotal] = useState(data.total);
+
+    // function to change present and total
+    const handlePresent = () => {
+        setPresent(present + 1);
+        setTotal(total + 1);
+    }
+
+    const handleAbsent = () => {
+        setTotal(total + 1);
+    }
+
+    const handleResetCard = () => {
+        setTotal(0);
+        setPresent(0);
+    }
+
+    // attendance calculation
+    let attendance = Math.floor((present / total) * 100);
+    if (total === 0) {
+        attendance = 0;
+    }
+
+    // managing the status
+    const leave = Math.floor((100*present-75*total)/75);
+    const attend = (0.75*total-present)/0.25;
+    let status;
+    let accentColor;
+    if(total===0)
+    {
+         status = "You have not attended any classes";
+    }
+    else if(attendance<75)
+    {
+        status = "Its "+attendance+"%. Attend "+attend+" class to get on track.";
+    }
+    else if(attendance===75)
+    {
+        status = "Its "+attendance+"%. On the border line. Dont leave any classes.";
+    }
+    else if(attendance>75)
+    {
+        status = "Its "+attendance+"%. On track. You may leave "+leave+" classs to chill";
+    }
 
     return (
         <Zoom in={true} style={{ transitionDelay: true ? '100ms' : '0ms' }}>
             <Paper elevation={3} className={classes.container}>
-                <Header>
-                    <Typography align="left" variant="button" className={classes.Typography}>Mathematics</Typography>
+                <Header className={attendance>=75?classes.accentBlue:classes.accentRed}>
+                    <Typography align="left" variant="button" className={classes.Typography}>{data.subject}</Typography>
                     <IconButton aria-label="delete" onClick={handleClick}>
                         <MoreVertIcon className={classes.IconButton} />
                     </IconButton>
@@ -74,34 +141,35 @@ const AttendanceCard = () => {
                         onClose={handleClose}
                         TransitionComponent={Fade}
                     >
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}><ReminderDialog/></MenuItem>
+                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}><ReminderDialog /></MenuItem>
+                        <MenuItem onClick={handleClose} className={classes.SubMenuItem} onClick={handleResetCard}>Reset Card</MenuItem>
                         <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Delete Card</MenuItem>
                     </Menu>
                 </Header>
                 <MidContent>
                     <Attendance>
                         <MidContentHead>Attendance</MidContentHead>
-                        <MidContentAttendance><Present>43</Present>/<Total>132</Total></MidContentAttendance>
+                        <MidContentAttendance className={attendance>=75?classes.Blue:classes.Red}><Present>{present}</Present>/<Total>{total}</Total></MidContentAttendance>
                     </Attendance>
                     <Status>
                         <MidContentHead>Status</MidContentHead>
-                        <MidContentDesc>On Track, you may leave next 28 classes.</MidContentDesc>
+                        <MidContentDesc>{status}</MidContentDesc>
                     </Status>
                 </MidContent>
                 <div>
-                    <LinearProgress variant="determinate" value={52} className={classes.visualAttendance} />
-                </div>
-                <FooterNav>
-                    <IconButton aria-label="done">
-                        <CheckCircleOutlineSharpIcon />
-                    </IconButton>
-                    <IconButton aria-label="miss">
-                        <CancelSharpIcon />
-                    </IconButton>
-                    <IconButton aria-label="noClass">
+                    <LinearProgress variant="determinate" value={attendance} className={classes.visualAttendance} color={attendance>=75?'primary':'secondary'}/>
+                    <FooterNav>
+                        <IconButton aria-label="done" onClick={handlePresent}>
+                            <CheckCircleOutlineSharpIcon />
+                        </IconButton>
+                        <IconButton aria-label="miss" onClick={handleAbsent}>
+                            <CancelSharpIcon />
+                        </IconButton>
+                        {/* <IconButton aria-label="noClass">
                         <NotInterestedSharpIcon />
-                    </IconButton>
-                </FooterNav>
+                    </IconButton> */}
+                    </FooterNav>
+                </div>
             </Paper>
         </Zoom>
     )
@@ -110,9 +178,9 @@ const AttendanceCard = () => {
 export default AttendanceCard;
 
 
-
+// custom styled components
 const Header = styled.div`
-    background-color:#3f50b5;
+    
     display:flex;
     justify-content:space-between;
 `
@@ -150,7 +218,7 @@ const MidContentAttendance = styled.h4`
 
 const MidContentDesc = styled.p`
     color:#434343;
-    font-size:14px;
+    font-size:12px;
 `
 
 const FooterNav = styled.div`
