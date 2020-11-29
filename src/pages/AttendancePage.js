@@ -1,30 +1,52 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import AddCardDialog from '../components/AddCardDialog'
 import AttendanceCard from '../components/AttendanceCard'
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import AttendanceImage from '../images/attendance.svg';
-
+import database from '../firebase';
 
 const useStyles = makeStyles((theme) => ({
-   container:{
-       padding:'5px',
-       overflow:'hidden'
-   }
+    container: {
+        padding: '5px',
+        overflow: 'hidden'
+    }
 }));
 
 
 const AttendancePage = () => {
+
+    const cards = [];
+    const [attendanceCards,setAttendanceCards]=useState([]);
+
+    useEffect(()=>{
+        database.ref('users/userIdHereAfterAuth/cards').on('value',(snapshot) => {
+           const array = [];
+           snapshot.forEach((childSnap)=>{
+               array.push({
+                   id:childSnap.key,
+                   ...childSnap.val()
+               })
+           })
+
+           const finalArr=array.slice(0).reverse().map((e)=>{
+               return <AttendanceCard key={e.id} data={e}/>
+           })
+
+           setAttendanceCards(finalArr);
+        })
+    },[])
+
     const classes = useStyles();
     return (
         <div className={classes.container}>
-           <AddCardDialog/>
-           <CardContainer>
-           <AttendanceCard/><AttendanceCard/><AttendanceCard/><AttendanceCard/><AttendanceCard/><AttendanceCard/><AttendanceCard/><AttendanceCard/>
-           </CardContainer>
-           <ImageContainer>
-               <Image src={AttendanceImage}/>
-           </ImageContainer>
+            <AddCardDialog />
+            <CardContainer>
+                {attendanceCards}
+            </CardContainer>
+            <ImageContainer>
+                <Image src={AttendanceImage} />
+            </ImageContainer>
         </div>
     )
 }
@@ -58,3 +80,4 @@ const Image = styled.img`
        width:100%;
     }
 `
+

@@ -53,7 +53,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 // main component
-const AttendanceCard = () => {
+const AttendanceCard = ({...props}) => {
+
 
     // styles fro material ui
     const classes = useStyles();
@@ -73,9 +74,9 @@ const AttendanceCard = () => {
 
     // initial state of card(will be coming from database)
     const data = {
-        subject: "Fluid Mechanics",
-        present: 10,
-        total: 12
+        subject: props.data.subject,
+        present: props.data.present,
+        total: props.data.total
     }
 
     // state hooks for present and total
@@ -86,6 +87,7 @@ const AttendanceCard = () => {
     const handlePresent = () => {
         setPresent(present + 1);
         setTotal(total + 1);
+        console.log(props)
     }
 
     const handleAbsent = () => {
@@ -107,7 +109,6 @@ const AttendanceCard = () => {
     const leave = Math.floor((100*present-75*total)/75);
     const attend = (0.75*total-present)/0.25;
     let status;
-    let accentColor;
     if(total===0)
     {
          status = "You have not attended any classes";

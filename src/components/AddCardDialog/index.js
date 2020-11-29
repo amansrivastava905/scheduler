@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Grow from '@material-ui/core/Grow';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-
+import database from '../../firebase';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
         background: theme.palette.grey[200],
-        borderRadius:'10px'
+        borderRadius: '10px'
     },
     head: {
         padding: '10px'
@@ -44,8 +44,45 @@ const useStyles = makeStyles((theme) => ({
 
 const AddCardDialog = () => {
     const classes = useStyles();
+
+    const [value, setValue] = useState('');
+    const handleChange = (e) => {
+        setValue(e.target.value);
+    }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const initialSubjects = [];
+        var duplicateFlag = 0;
+        database.ref('users/userIdHereAfterAuth/cards').once('value').then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+                initialSubjects.push(childSnapshot.val())
+            })
+
+            initialSubjects.forEach((e) => {
+                if (e.subject === value)
+                    duplicateFlag++;
+            })
+
+            if (value !== '' && duplicateFlag===0) {
+                database.ref('users/userIdHereAfterAuth/cards').push({
+                    subject: value.toLowerCase(),
+                    present: 0,
+                    total: 0
+                }).then(() => {
+                    alert("subject card added");
+                })
+            }
+            else if(duplicateFlag>0)
+            {
+                alert("subject card already exists");
+            }
+            else {
+                alert("please add a subject name");
+            }
+        })
+    }
     return (
-        <Grow  in={true} mountOnEnter unmountOnExit>
+        <Grow in={true} mountOnEnter unmountOnExit>
             <div className={classes.container}>
                 <div className={classes.root}>
                     <Paper elevation={0} className={classes.paper}>
@@ -62,6 +99,8 @@ const AddCardDialog = () => {
                                     name="subject"
                                     autoComplete="subject"
                                     size="small"
+                                    required
+                                    onChange={handleChange}
                                 />
 
                                 <Button
@@ -69,6 +108,7 @@ const AddCardDialog = () => {
                                     variant="contained"
                                     color="primary"
                                     className={classes.submit}
+                                    onClick={handleSubmit}
                                 >
                                     create
                                 </Button>
