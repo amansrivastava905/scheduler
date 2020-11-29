@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -14,6 +14,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
 import ReminderDialog from '../ReminderDialog';
+import database from '../../firebase';
 
 // styles for material ui
 const useStyles = makeStyles((theme) => ({
@@ -85,19 +86,46 @@ const AttendanceCard = ({...props}) => {
 
     // function to change present and total
     const handlePresent = () => {
-        setPresent(present + 1);
-        setTotal(total + 1);
-        console.log(props)
+        // setPresent(present + 1);
+        // setTotal(total + 1);
+        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).update({
+            total:total+1,
+            present:present+1
+        })
     }
 
     const handleAbsent = () => {
-        setTotal(total + 1);
+        // setTotal(total + 1);
+        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).update({
+            total:total+1
+        })
     }
 
     const handleResetCard = () => {
-        setTotal(0);
-        setPresent(0);
+        // setTotal(0);
+        // setPresent(0);
+        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).update({
+            total:0,
+            present:0
+        })
+        handleClose();
     }
+
+    const handleDeleteCard = ()=>{
+        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).remove();
+        handleClose();
+    }
+
+    // use effect o change state whenever data changes
+    useEffect(()=>{
+        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).on('value',(snapshot)=>{
+            if(snapshot.val()!==null)
+            {
+                setTotal(snapshot.val().total);
+                setPresent(snapshot.val().present);
+            }
+        })
+    },[])
 
     // attendance calculation
     let attendance = Math.floor((present / total) * 100);
@@ -131,7 +159,7 @@ const AttendanceCard = ({...props}) => {
             <Paper elevation={3} className={classes.container}>
                 <Header className={attendance>=75?classes.accentBlue:classes.accentRed}>
                     <Typography align="left" variant="button" className={classes.Typography}>{data.subject}</Typography>
-                    <IconButton aria-label="delete" onClick={handleClick}>
+                    <IconButton aria-label="3 dot menu" onClick={handleClick}>
                         <MoreVertIcon className={classes.IconButton} />
                     </IconButton>
                     <Menu
@@ -143,8 +171,8 @@ const AttendanceCard = ({...props}) => {
                         TransitionComponent={Fade}
                     >
                         <MenuItem onClick={handleClose} className={classes.SubMenuItem}><ReminderDialog /></MenuItem>
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem} onClick={handleResetCard}>Reset Card</MenuItem>
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Delete Card</MenuItem>
+                        <MenuItem className={classes.SubMenuItem} onClick={handleResetCard}>Reset Card</MenuItem>
+                        <MenuItem onClick={handleDeleteCard} className={classes.SubMenuItem}>Delete Card</MenuItem>
                     </Menu>
                 </Header>
                 <MidContent>
