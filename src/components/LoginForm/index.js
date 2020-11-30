@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Slide from '@material-ui/core/Slide';
-
+import { signInWithGoogle } from '../../firebase.js';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -81,6 +81,15 @@ export const SignIn = () => {
               className={classes.submit}
             >
               Sign In
+                    </Button>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={signInWithGoogle}
+            >
+              Sign In with Google
                     </Button>
             <Grid container justify="center">
               {/* <Grid item xs>

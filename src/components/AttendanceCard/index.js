@@ -15,6 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
 import ReminderDialog from '../ReminderDialog';
 import database from '../../firebase';
+import {auth} from '../../firebase';
 
 // styles for material ui
 const useStyles = makeStyles((theme) => ({
@@ -88,7 +89,7 @@ const AttendanceCard = ({...props}) => {
     const handlePresent = () => {
         // setPresent(present + 1);
         // setTotal(total + 1);
-        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).update({
+        database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
             total:total+1,
             present:present+1
         })
@@ -96,7 +97,7 @@ const AttendanceCard = ({...props}) => {
 
     const handleAbsent = () => {
         // setTotal(total + 1);
-        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).update({
+        database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
             total:total+1
         })
     }
@@ -104,7 +105,7 @@ const AttendanceCard = ({...props}) => {
     const handleResetCard = () => {
         // setTotal(0);
         // setPresent(0);
-        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).update({
+        database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
             total:0,
             present:0
         })
@@ -112,13 +113,13 @@ const AttendanceCard = ({...props}) => {
     }
 
     const handleDeleteCard = ()=>{
-        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).remove();
+        database.ref(`users/${props.uid}/cards/${props.data.id}`).remove();
         handleClose();
     }
 
     // use effect o change state whenever data changes
     useEffect(()=>{
-        database.ref('users/userIdHereAfterAuth/cards/'+props.data.id).on('value',(snapshot)=>{
+        database.ref(`users/${props.uid}/cards/${props.data.id}`).on('value',(snapshot)=>{
             if(snapshot.val()!==null)
             {
                 setTotal(snapshot.val().total);

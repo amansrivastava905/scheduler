@@ -4,6 +4,8 @@ import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
 import ProfileImg from '../images/default-profile.svg'
 import Button from '@material-ui/core/Button';
+import { Link } from 'react-router-dom';
+import { auth } from '../firebase'
 
 
 const AccountPage = () => {
@@ -16,7 +18,11 @@ const AccountPage = () => {
                     </ImageContainer>
                     <Typography variant="h4" color="Primary" align="center">Aman Srivastava</Typography>
                     <ButtonContainer>
-                        <Button type="submit" variant="contained" color="primary">Logout</Button>
+                        <Button type="submit" variant="contained" color="primary" onClick={() => auth.signOut()}>
+                         <Link to='/'>
+                         LOGOUT
+                         </Link>
+                        </Button>
                     </ButtonContainer>
                 </AccountContainer>
             </Container>

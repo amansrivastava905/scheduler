@@ -6,7 +6,8 @@ import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import database from '../../firebase';
-
+import firebase from 'firebase';
+import {auth} from '../../firebase';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,8 +41,6 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-
-
 const AddCardDialog = () => {
     const classes = useStyles();
 
@@ -53,7 +52,10 @@ const AddCardDialog = () => {
         e.preventDefault();
         const initialSubjects = [];
         var duplicateFlag = 0;
-        database.ref('users/userIdHereAfterAuth/cards').once('value').then((snapshot) => {
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if(user) {
+                database.ref(`users/${user.uid}/cards`).once('value').then((snapshot) => {
             snapshot.forEach((childSnapshot) => {
                 initialSubjects.push(childSnapshot.val())
             })
@@ -64,7 +66,7 @@ const AddCardDialog = () => {
             })
 
             if (value !== '' && duplicateFlag===0) {
-                database.ref('users/userIdHereAfterAuth/cards').push({
+                database.ref(`users/${user.uid}/cards`).push({
                     subject: value.toLowerCase(),
                     present: 0,
                     total: 0
@@ -78,6 +80,8 @@ const AddCardDialog = () => {
             }
             else {
                 alert("please add a subject name");
+            }
+        })
             }
         })
     }
