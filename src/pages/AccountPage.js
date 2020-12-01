@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState,useEffect } from 'react'
 import styled from 'styled-components'
 import Typography from '@material-ui/core/Typography';
 import Slide from '@material-ui/core/Slide';
@@ -6,21 +6,51 @@ import ProfileImg from '../images/default-profile.svg'
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 import { auth } from '../firebase'
+import firebase from 'firebase'
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles({
+    buttonLink:{
+       textDecoration:'none',
+       color:"white"
+    }
+   });
 
 
 const AccountPage = () => {
+
+    const [userName, setUserName] = useState("");
+    const [userEmail, setUserEmail] = useState("");
+    const [userImage, setUserImage] = useState(ProfileImg);
+    
+    useEffect(()=>{
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                // User is signed in.
+                setUserName(user.displayName);
+                setUserEmail(user.email);
+                setUserImage(user.photoURL);
+            } else {
+                // No user is signed in.
+                setUserName("please sign-in to view")
+            }
+        });
+    },[])
+
+    const classes = useStyles();
     return (
         <Slide direction="left" in={true} mountOnEnter unmountOnExit>
             <Container>
                 <AccountContainer>
                     <ImageContainer>
-                        <Image src={ProfileImg} />
+                        <Image src={userImage} />
                     </ImageContainer>
-                    <Typography variant="h4" color="Primary" align="center">Aman Srivastava</Typography>
+                    <Typography variant="h4" color="primary" align="center">{userName}</Typography>
+                    <Typography variant="h6" color="textSecondary" align="center">{userEmail}</Typography>
                     <ButtonContainer>
                         <Button type="submit" variant="contained" color="primary" onClick={() => auth.signOut()}>
-                         <Link to='/'>
-                         LOGOUT
+                            <Link to='/' className={classes.buttonLink}>
+                                LOGOUT
                          </Link>
                         </Button>
                     </ButtonContainer>

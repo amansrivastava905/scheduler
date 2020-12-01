@@ -51,7 +51,7 @@ const AttendancePage = () => {
     const classes = useStyles();
     return (
         <div className={classes.container}>
-            <AddCardDialog />
+           <AddCardDialog />
             <CardContainer>
                 {attendanceCards}
             </CardContainer>
