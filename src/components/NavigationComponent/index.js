@@ -42,8 +42,8 @@ export function BottomNav() {
     <div>
       <Zoom in={true} style={{ transitionDelay: true ? '500ms' : '0ms' }}>
       <BottomNavigation value={value} onChange={handleChange} className={classes.bottomNav} showLabels={true}>
-        <BottomNavigationAction label="Home" value="Home" icon={<HomeIcon />} component={Link} to={'/'} />
-        <BottomNavigationAction label="Attendance" value="Attendance" icon={<SchoolIcon />} component={Link} to={'/attendance'} />
+        
+        <BottomNavigationAction label="Attendance" value="Attendance" icon={<SchoolIcon />} component={Link} to={'/'} />
         <BottomNavigationAction label="Schedule" value="Schedule" icon={<ScheduleIcon />} component={Link} to={'/schedule'} />
         <BottomNavigationAction label="Account" value="Account" icon={<PersonIcon />} component={Link} to={'/account'} />
       </BottomNavigation>

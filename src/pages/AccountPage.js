@@ -22,6 +22,7 @@ const AccountPage = () => {
     const [userName, setUserName] = useState("");
     const [userEmail, setUserEmail] = useState("");
     const [userImage, setUserImage] = useState(ProfileImg);
+    const [userDetail,setUserDetail] = useState(false);
     
     useEffect(()=>{
         firebase.auth().onAuthStateChanged(function (user) {
@@ -30,12 +31,18 @@ const AccountPage = () => {
                 setUserName(user.displayName);
                 setUserEmail(user.email);
                 setUserImage(user.photoURL);
+                setUserDetail(true);
             } else {
                 // No user is signed in.
-                setUserName("please sign-in to view")
+                setUserName("please sign in to your account");
+                setUserDetail(false);
             }
         });
     },[])
+
+    const signout = ()=>{
+        auth.signOut()
+    }
 
     const classes = useStyles();
     return (
@@ -48,10 +55,8 @@ const AccountPage = () => {
                     <Typography variant="h4" color="primary" align="center">{userName}</Typography>
                     <Typography variant="h6" color="textSecondary" align="center">{userEmail}</Typography>
                     <ButtonContainer>
-                        <Button type="submit" variant="contained" color="primary" onClick={() => auth.signOut()}>
-                            <Link to='/' className={classes.buttonLink}>
-                                LOGOUT
-                         </Link>
+                        <Button type="submit" variant="contained" color="primary" onClick={signout}>
+                            {(userDetail=== false)?<Link to='/' className={classes.buttonLink}>LOGOUT</Link>:'LOGOUT'}
                         </Button>
                     </ButtonContainer>
                 </AccountContainer>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Route, Switch, HashRouter } from 'react-router-dom';
+import { Route, Switch, HashRouter, Redirect } from 'react-router-dom';
 import './App.css'
 import ErrorPage from './pages/errorPage';
 import LandingPage from './pages/LandingPage';
@@ -36,18 +36,33 @@ const App = () => {
 
   return (
     <div className={classes.container}>
-      <HashRouter>
+    {
+      (user !== null) ? (
+        <HashRouter>
         <TopBar />
         <BottomNav />
         <Switch>
-          <Route path="/" exact component={LandingPage} />
-          <Route path="/signup" exact component={SignupPage} />
           <Route path="/attendance" exact component={AttendancePage} />
           <Route path="/schedule" exact component={ErrorPage} />
           <Route path="/account" exact component={AccountPage} />
-          <Route path="*" component={ErrorPage} />
+          <Route path="*" render={() => <Redirect to='/attendance' />} />
         </Switch>
       </HashRouter>
+        )
+      : 
+      (
+        <HashRouter>
+        <TopBar />
+        <Switch>
+        <Route path="/" exact component={LandingPage} />
+        <Route path="/signup" exact component={SignupPage} />
+        <Route path="*" render={() => <Redirect to='/' />} />
+        </Switch>
+        </HashRouter>
+      )
+
+    }
+      
     </div>
   )
 }

@@ -8,6 +8,13 @@ import Button from '@material-ui/core/Button';
 import database from '../../firebase';
 import firebase from 'firebase';
 import {auth} from '../../firebase';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,11 +45,33 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center'
+    },
+    snackbar: {
+        width: '100%',
+        '& > * + *': {
+            marginTop: theme.spacing(2),
+        },
     }
 }));
 
 const AddCardDialog = () => {
     const classes = useStyles();
+
+    const [snackOpen, setSnackOpen] = React.useState(false);
+    const [snackSeverity,setSnackSeverity]=useState("success");
+    const [snackMessage,setSnackMessage]=useState("");
+    const handleSnackOpen = (severity,message) => {
+        setSnackSeverity(severity);
+        setSnackMessage(message);
+        setSnackOpen(true);
+    }
+    const handleSnackClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setSnackOpen(false);
+    };
 
     const [value, setValue] = useState('');
     const handleChange = (e) => {
@@ -50,13 +79,16 @@ const AddCardDialog = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        const initialSubjects = [];
-        var duplicateFlag = 0;
+        
 
         firebase.auth().onAuthStateChanged((user) => {
             if(user) {
+                setValue('');
+               const initialSubjects = [];
+                var duplicateFlag = 0; 
+
                 database.ref(`users/${user.uid}/cards`).once('value').then((snapshot) => {
-            snapshot.forEach((childSnapshot) => {
+                snapshot.forEach((childSnapshot) => {
                 initialSubjects.push(childSnapshot.val())
             })
 
@@ -71,18 +103,18 @@ const AddCardDialog = () => {
                     present: 0,
                     total: 0
                 }).then(() => {
-                    alert("subject card added");
+                    handleSnackOpen("success","card created successfully");
                 })
             }
             else if(duplicateFlag>0)
             {
-                alert("subject card already exists");
+                handleSnackOpen("warning","card already exists");
             }
             else {
-                alert("please add a subject name");
+                handleSnackOpen("error","add a subject name");
             }
         })
-            }
+            } else return null
         })
     }
     return (
@@ -119,6 +151,13 @@ const AddCardDialog = () => {
                             </form>
                         </div>
                     </Paper>
+                </div>
+                <div className={classes.snackbar}>
+                    <Snackbar open={snackOpen} autoHideDuration={6000} onClose={handleSnackClose}>
+                        <Alert onClose={handleSnackClose} severity={snackSeverity}>
+                            {snackMessage}
+                        </Alert>
+                    </Snackbar>
                 </div>
             </div>
         </Grow>
