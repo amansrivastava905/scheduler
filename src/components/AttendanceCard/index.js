@@ -125,7 +125,7 @@ const AttendanceCard = ({...props}) => {
         if(undoArray.length!==0){
             database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
                 total:undoArray[0].prevTotal,
-                present:undoArray[0].prevTotal
+                present:undoArray[0].prevPresent
             })
             undoArray.splice(0,1);
         }
