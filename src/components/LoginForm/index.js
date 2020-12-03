@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Slide from '@material-ui/core/Slide';
-import { signInWithGoogle } from '../../firebase.js';
+import { auth, signInWithGoogle, createUserProfileDocument} from '../../firebase.js';
 import firebase from 'firebase'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -44,12 +44,15 @@ export const SignIn = () => {
   const [loading, setLoading] = useState(true);
   const [user,setUser]=useState(false);
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleGoogleSignIn = ()=>{
     signInWithGoogle();
   }
 
   useEffect(()=>{
-    firebase.auth().onAuthStateChanged((user)=>{
+    const unsubscribe = firebase.auth().onAuthStateChanged((user)=>{
       if(user){
         setUser(true);
         setLoading(false);
@@ -60,7 +63,25 @@ export const SignIn = () => {
         setLoading(false);
       }
     })
+    return unsubscribe;
   },[])
+
+  const handleEmail = event => {
+    setEmail(event.target.value);
+  }
+  const handlePassword = event =>{
+    setPassword(event.target.value);
+  }
+
+  const handleSubmit= async event => {
+    try {
+      await auth.signInWithEmailAndPassword(email, password);
+      setEmail("")
+      setPassword("")
+    } catch(error) {
+      console.log(error);
+    }
+  }
 
 
 
@@ -86,7 +107,7 @@ export const SignIn = () => {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
+              onChange={handleEmail}
             />
             <TextField
               variant="outlined"
@@ -97,7 +118,7 @@ export const SignIn = () => {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              onChange={handlePassword}
             />
 
             <Button
@@ -106,6 +127,7 @@ export const SignIn = () => {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={handleSubmit}
             >
               Sign In
                     </Button>
@@ -158,6 +180,48 @@ const LoaderContainer = styled.div`
 export const SignUp = () => {
   const classes = useStyles();
 
+  const [displayName, setDisplayName] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSubmit = async event => {
+    event.preventDefault();
+
+    if(password !== confirmPassword){
+      alert("Passwords don't match");
+      return
+    }
+
+    try {
+      auth.createUserWithEmailAndPassword(email, password).then(auth.signOut());
+      setDisplayName(null)
+      setEmail("")
+      setPassword("")
+
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  const handleDisplayName = event => {
+    setDisplayName(event.target.value)
+  }
+
+  const handleEmail = event => {
+    setEmail(event.target.value);
+  }
+
+  const handlePassword = event =>{
+    setPassword(event.target.value);
+  }
+
+  const handleConfirmPassword = event => {
+    setConfirmPassword(event.target.value);
+  }
+
+
+
   return (
     <Slide direction="left" in={true} mountOnEnter unmountOnExit>
       <Container component="main" maxWidth="xs">
@@ -171,26 +235,15 @@ export const SignUp = () => {
           </Typography>
           <form className={classes.form} noValidate>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12}>
                 <TextField
-                  autoComplete="fname"
-                  name="firstName"
+                  name="Display Name"
                   variant="outlined"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="lname"
+                  id="Display Name"
+                  label="Display Name"
+                  onChange={handleDisplayName}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -202,6 +255,7 @@ export const SignUp = () => {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  onChange={handleEmail}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -213,7 +267,19 @@ export const SignUp = () => {
                   label="Password"
                   type="password"
                   id="password"
-                  autoComplete="current-password"
+                  onChange={handlePassword}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="Confirm Password"
+                  onChange={handleConfirmPassword}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -225,6 +291,7 @@ export const SignUp = () => {
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick= {handleSubmit}
             >
               Sign Up
             </Button>

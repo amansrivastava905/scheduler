@@ -20,17 +20,18 @@ const useStyles = makeStyles({
 
 const App = () => {
 
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState("")
 
   useEffect (() => {
-    auth.onAuthStateChanged(async user => {
-      createUserProfileDocument(user)
+    const unsubscribeFromAuth = auth.onAuthStateChanged(async user => {
+      await createUserProfileDocument(user)
       await setUser(user)
     })
-    }, [])
 
-  console.log(user)
-  console.log(auth.X)
+    return unsubscribeFromAuth
+    }, [])
+  // console.log(user)
+  // console.log(auth.X)
 
   const classes = useStyles();
 

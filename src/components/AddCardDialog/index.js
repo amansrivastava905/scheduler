@@ -84,7 +84,7 @@ const AddCardDialog = () => {
         firebase.auth().onAuthStateChanged((user) => {
             if(user) {
                 setValue('');
-               const initialSubjects = [];
+                const initialSubjects = [];
                 var duplicateFlag = 0; 
 
                 database.ref(`users/${user.uid}/cards`).once('value').then((snapshot) => {

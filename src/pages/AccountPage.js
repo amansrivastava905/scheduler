@@ -25,7 +25,7 @@ const AccountPage = () => {
     const [userDetail,setUserDetail] = useState(false);
     
     useEffect(()=>{
-        firebase.auth().onAuthStateChanged(function (user) {
+        const unsubscribe = firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
                 // User is signed in.
                 setUserName(user.displayName);
@@ -38,7 +38,8 @@ const AccountPage = () => {
                 setUserDetail(false);
             }
         });
-    },[])
+        return unsubscribe; 
+        },[])
 
     const signout = ()=>{
         auth.signOut()

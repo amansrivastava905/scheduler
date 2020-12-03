@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import AttendanceImage from '../images/attendance.svg';
 import database from '../firebase';
 import firebase from 'firebase';
-import { auth } from '../firebase';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -21,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
 //   return user;
 //   })
 
-console.log(auth.X);
 
 const AttendancePage = () => {
     const cards = [];
@@ -29,7 +27,7 @@ const AttendancePage = () => {
     const [user, setUser] = useState(false);
 
     useEffect(() => {
-        firebase.auth().onAuthStateChanged((user) => {
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
 
                 database.ref(`users/${user.uid}/cards`).on('value', (snapshot) => {
@@ -51,7 +49,9 @@ const AttendancePage = () => {
             }
         })
 
-    }, [])
+        return unsubscribe
+
+    }, [user])
 
     const classes = useStyles();
     return (
