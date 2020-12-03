@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import CheckCircleOutlineSharpIcon from '@material-ui/icons/CheckCircleOutlineSharp';
-// import NotInterestedSharpIcon from '@material-ui/icons/NotInterestedSharp';
 import CancelSharpIcon from '@material-ui/icons/CancelSharp';
 import Zoom from '@material-ui/core/Zoom';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -16,6 +15,7 @@ import Fade from '@material-ui/core/Fade';
 import ReminderDialog from '../ReminderDialog';
 import database from '../../firebase';
 import {auth} from '../../firebase';
+import UndoIcon from '@material-ui/icons/Undo';
 
 // styles for material ui
 const useStyles = makeStyles((theme) => ({
@@ -87,28 +87,29 @@ const AttendanceCard = ({...props}) => {
 
     // function to change present and total
     const handlePresent = () => {
-        // setPresent(present + 1);
-        // setTotal(total + 1);
+        setUndoArray([{prevPresent:present,prevTotal:total}].concat(undoArray));
         database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
             total:total+1,
             present:present+1
         })
+        setUndoDisabled(false);
     }
 
     const handleAbsent = () => {
-        // setTotal(total + 1);
+        setUndoArray([{prevPresent:present,prevTotal:total}].concat(undoArray));
         database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
             total:total+1
         })
+        setUndoDisabled(false);
     }
 
     const handleResetCard = () => {
-        // setTotal(0);
-        // setPresent(0);
+        setUndoArray([{prevPresent:present,prevTotal:total}].concat(undoArray));
         database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
             total:0,
             present:0
         })
+        setUndoDisabled(false);
         handleClose();
     }
 
@@ -116,6 +117,30 @@ const AttendanceCard = ({...props}) => {
         database.ref(`users/${props.uid}/cards/${props.data.id}`).remove();
         handleClose();
     }
+
+    // undo feature
+    const [undoDisabled, setUndoDisabled] = useState(true);
+    const [undoArray,setUndoArray]=useState([]);
+    const handleUndo = ()=>{
+        if(undoArray.length!==0){
+            database.ref(`users/${props.uid}/cards/${props.data.id}`).update({
+                total:undoArray[0].prevTotal,
+                present:undoArray[0].prevTotal
+            })
+            undoArray.splice(0,1);
+        }
+        
+        if(undoArray.length===0)
+        {
+            setUndoDisabled(true);
+        }
+    }
+    // useEffect(()=>{
+    //     if(undoArray.length===0)
+    //     {
+    //         setUndoDisabled(true);
+    //     }
+    // },[]);
 
     // use effect o change state whenever data changes
     useEffect(()=>{
@@ -195,9 +220,9 @@ const AttendanceCard = ({...props}) => {
                         <IconButton aria-label="miss" onClick={handleAbsent}>
                             <CancelSharpIcon />
                         </IconButton>
-                        {/* <IconButton aria-label="noClass">
-                        <NotInterestedSharpIcon />
-                    </IconButton> */}
+                        <IconButton aria-label="noClass" disabled={undoDisabled} onClick={handleUndo}>
+                            <UndoIcon />
+                        </IconButton>
                     </FooterNav>
                 </div>
             </Paper>

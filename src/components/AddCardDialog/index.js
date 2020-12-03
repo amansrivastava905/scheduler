@@ -104,6 +104,7 @@ const AddCardDialog = () => {
                     total: 0
                 }).then(() => {
                     handleSnackOpen("success","card created successfully");
+                    setValue('');
                 })
             }
             else if(duplicateFlag>0)
@@ -135,6 +136,7 @@ const AddCardDialog = () => {
                                     name="subject"
                                     autoComplete="subject"
                                     size="small"
+                                    value={value}
                                     required
                                     onChange={handleChange}
                                 />
