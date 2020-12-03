@@ -64,8 +64,8 @@ const AttendancePage = () => {
                     </div>)
                     : ((attendanceCards.length === 0)
                         ? (<div>
-                                <Typography variant="h2" color="primary" align="center">No Cards Here</Typography>
-                                <Typography variant="h5" color="textSecondary" align="center">Use above form to add new subject card.</Typography>
+                                <Typography variant="h2" color="primary" align="center">No Cards</Typography>
+                                <Typography variant="h5" color="textSecondary" align="center">Add subject cards from above</Typography>
                             </div>
                         )
                         : attendanceCards)
