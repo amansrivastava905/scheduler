@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useState, useEffect} from 'react';
+import styled from 'styled-components'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,6 +12,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Slide from '@material-ui/core/Slide';
 import { signInWithGoogle } from '../../firebase.js';
+import firebase from 'firebase'
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,9 +41,33 @@ const useStyles = makeStyles((theme) => ({
 export const SignIn = () => {
 
   const classes = useStyles();
+  const [loading, setLoading] = useState(true);
+  const [user,setUser]=useState(false);
+
+  const handleGoogleSignIn = ()=>{
+    signInWithGoogle();
+  }
+
+  useEffect(()=>{
+    firebase.auth().onAuthStateChanged((user)=>{
+      if(user){
+        setUser(true);
+        setLoading(false);
+      }
+      else if(!user)
+      {
+        setUser(false);
+        setLoading(false);
+      }
+    })
+  },[])
+
+
 
   return (
-    <Slide direction="right" in={true} mountOnEnter unmountOnExit>
+    (loading===false)
+    ?(
+      <Slide direction="right" in={true} mountOnEnter unmountOnExit>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -87,7 +114,7 @@ export const SignIn = () => {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={signInWithGoogle}
+              onClick={handleGoogleSignIn}
             >
               Sign In with Google
                     </Button>
@@ -107,12 +134,20 @@ export const SignIn = () => {
         </div>
       </Container>
     </Slide>
+    )
+    :(<LoaderContainer><CircularProgress/></LoaderContainer>)
   );
 }
 
 
 
-
+const LoaderContainer = styled.div`
+  width:100vw;
+  min-height:50vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+`
 
 
 

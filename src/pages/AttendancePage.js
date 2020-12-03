@@ -6,7 +6,9 @@ import styled from 'styled-components';
 import AttendanceImage from '../images/attendance.svg';
 import database from '../firebase';
 import firebase from 'firebase';
-import {auth} from '../firebase';
+import { auth } from '../firebase';
+import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -23,37 +25,51 @@ console.log(auth.X);
 
 const AttendancePage = () => {
     const cards = [];
-    const [attendanceCards,setAttendanceCards]=useState([]);
+    const [attendanceCards, setAttendanceCards] = useState([]);
+    const [user, setUser] = useState(false);
 
-    useEffect(()=>{
-      firebase.auth().onAuthStateChanged((user) => {
-        if(user) {
-          database.ref(`users/${user.uid}/cards`).on('value',(snapshot) => {
-           const array = [];
-           snapshot.forEach((childSnap)=>{
-               array.push({
-                   id:childSnap.key,
-                   ...childSnap.val()
-               })
-           })
+    useEffect(() => {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
 
-           const finalArr=array.slice(0).reverse().map((e)=>{
-               return <AttendanceCard key={e.id} data={e} uid={user.uid}/>
-           })
+                database.ref(`users/${user.uid}/cards`).on('value', (snapshot) => {
+                    const array = [];
+                    snapshot.forEach((childSnap) => {
+                        array.push({
+                            id: childSnap.key,
+                            ...childSnap.val()
+                        })
+                    })
 
-           setAttendanceCards(finalArr);
+                    const finalArr = array.slice(0).reverse().map((e) => {
+                        return <AttendanceCard key={e.id} data={e} uid={user.uid} />
+                    })
+
+                    setAttendanceCards(finalArr);
+                    setUser(true);
+                })
+            }
         })
-        }
-      })
-        
-    },[])
+
+    }, [])
 
     const classes = useStyles();
     return (
         <div className={classes.container}>
-           <AddCardDialog />
+            <AddCardDialog />
             <CardContainer>
-                {attendanceCards}
+                {(user === false)
+                    ? (<div className={classes.loader}>
+                        <CircularProgress />
+                    </div>)
+                    : ((attendanceCards.length === 0)
+                        ? (<div>
+                                <Typography variant="h2" color="primary" align="center">No Cards Here</Typography>
+                                <Typography variant="h5" color="textSecondary" align="center">Use above form to add new subject card.</Typography>
+                            </div>
+                        )
+                        : attendanceCards)
+                }
             </CardContainer>
             <ImageContainer>
                 <Image src={AttendanceImage} />
