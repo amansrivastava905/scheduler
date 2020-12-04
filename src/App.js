@@ -30,8 +30,8 @@ const App = () => {
 
     return unsubscribeFromAuth
     }, [])
-  console.log(user)
-  console.log(auth.X)
+  // console.log(user)
+  // console.log(auth.X)
 
   const classes = useStyles();
 

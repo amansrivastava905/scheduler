@@ -51,7 +51,7 @@ const AttendancePage = () => {
 
         return unsubscribe
 
-    }, [user])
+    }, [])
 
     const classes = useStyles();
     return (
