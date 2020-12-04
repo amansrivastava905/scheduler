@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import ScheduleIcon from '@material-ui/icons/Schedule';
-import HomeIcon from '@material-ui/icons/Home';
+import BookIcon from '@material-ui/icons/Book';
 import SchoolIcon from '@material-ui/icons/School';
 import PersonIcon from '@material-ui/icons/Person';
 import { Link } from 'react-router-dom';
@@ -44,6 +44,7 @@ export function BottomNav() {
       <BottomNavigation value={value} onChange={handleChange} className={classes.bottomNav} showLabels={true}>
         
         <BottomNavigationAction label="Attendance" value="Attendance" icon={<SchoolIcon />} component={Link} to={'/'} />
+        <BottomNavigationAction label="Notes" value="Notes" icon={<BookIcon />} component={Link} to={'/notes'} />
         <BottomNavigationAction label="Schedule" value="Schedule" icon={<ScheduleIcon />} component={Link} to={'/schedule'} />
         <BottomNavigationAction label="Account" value="Account" icon={<PersonIcon />} component={Link} to={'/account'} />
       </BottomNavigation>

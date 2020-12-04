@@ -74,13 +74,17 @@ export const SignIn = () => {
   }
 
   const handleSubmit= async event => {
+    setLoading(true);
     event.preventDefault()
     try {
       await auth.signInWithEmailAndPassword(email, password);
-      setEmail("")
-      setPassword("")
+      
+      setEmail("");
+      setPassword("");
+      setLoading(false);
     } catch(error) {
-      console.log(error);
+      setLoading(false);
+      alert(error.message);
     }
   }
 

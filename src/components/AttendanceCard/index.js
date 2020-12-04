@@ -12,10 +12,10 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
-import ReminderDialog from '../ReminderDialog';
 import database from '../../firebase';
 import {auth} from '../../firebase';
 import UndoIcon from '@material-ui/icons/Undo';
+import { Link } from 'react-router-dom';
 
 // styles for material ui
 const useStyles = makeStyles((theme) => ({
@@ -50,6 +50,10 @@ const useStyles = makeStyles((theme) => ({
     },
     accentRed:{
         backgroundColor:"#f44336"
+    },
+    link:{
+        textDecoration:"none",
+        color:"#434343"
     }
 }));
 
@@ -196,7 +200,7 @@ const AttendanceCard = ({...props}) => {
                         onClose={handleClose}
                         TransitionComponent={Fade}
                     >
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}><ReminderDialog /></MenuItem>
+                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}><Link to={{pathname:'/addNote',state:{id:props.data.id}}} className={classes.link}>Add Note</Link></MenuItem>
                         <MenuItem className={classes.SubMenuItem} onClick={handleResetCard}>Reset Card</MenuItem>
                         <MenuItem onClick={handleDeleteCard} className={classes.SubMenuItem}>Delete Card</MenuItem>
                     </Menu>
@@ -220,7 +224,7 @@ const AttendanceCard = ({...props}) => {
                         <IconButton aria-label="miss" onClick={handleAbsent}>
                             <CancelSharpIcon />
                         </IconButton>
-                        <IconButton aria-label="noClass" disabled={undoDisabled} onClick={handleUndo}>
+                        <IconButton aria-label="undo" disabled={undoDisabled} onClick={handleUndo}>
                             <UndoIcon />
                         </IconButton>
                     </FooterNav>
