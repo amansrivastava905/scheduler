@@ -24,8 +24,8 @@ const useStyles = makeStyles((theme) => ({
     AddButton: {
         position: 'fixed',
         zIndex: '200',
-        top: '80vh',
-        left: '80vw'
+        top: '75vh',
+        left: '75vw'
     }
 }));
 
@@ -84,6 +84,9 @@ const NotesPage = () => {
                 <AddIcon />
             </Fab>
             <NotebookContainer>
+                <Notebook />
+                <Notebook />
+                <Notebook />
                 <Notebook />
             </NotebookContainer>
 
