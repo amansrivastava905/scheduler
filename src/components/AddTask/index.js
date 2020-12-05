@@ -70,7 +70,8 @@ const AddTask = () => {
                 setValue('');
                 if (value !== '') {
                     database.ref(`users/${user.uid}/schedule`).push({
-                        task: value
+                        task: value,
+                        done:false
                     }).then(() => {
                         handleSnackOpen("success", "task added");
                         setValue('');

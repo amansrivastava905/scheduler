@@ -9,7 +9,6 @@ import SignupPage from './pages/SignupPage'
 import { makeStyles } from '@material-ui/core/styles';
 import AccountPage from './pages/AccountPage';
 import NotesPage from './pages/NotesPage';
-import AddNotePage from './pages/AddNotePage';
 import SchedulePage from './pages/SchedulePage';
 import {auth, createUserProfileDocument} from './firebase.js'
 
@@ -48,7 +47,6 @@ const App = () => {
         <Switch>
           <Route path="/attendance" exact component={AttendancePage} />
           <Route path="/notes" exact component={NotesPage} />
-          <Route path="/addNote" exact component={AddNotePage} />
           <Route path="/schedule" exact component={SchedulePage} />
           <Route path="/account" exact component={AccountPage} />
           <Route path="*" render={() => <Redirect to='/attendance' />} />

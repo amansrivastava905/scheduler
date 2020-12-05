@@ -39,13 +39,16 @@ const TaskCard = ({...props}) => {
 
     useEffect(()=>{
         database.ref(`users/${props.uid}/schedule/${props.data.id}`).on('value',(snapshot)=>{
-            if(snapshot.val().done===true)
+            if(snapshot.val())
             {
-                setDone(classes.done);
-            }
-            else
-            {
-                setDone('');
+                if(snapshot.val().done===true)
+                {
+                    setDone(classes.done);
+                }
+                else
+                {
+                    setDone('');
+                }
             }
         })
     },[])

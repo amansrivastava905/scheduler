@@ -15,7 +15,6 @@ import Fade from '@material-ui/core/Fade';
 import database from '../../firebase';
 import {auth} from '../../firebase';
 import UndoIcon from '@material-ui/icons/Undo';
-import { Link } from 'react-router-dom';
 
 // styles for material ui
 const useStyles = makeStyles((theme) => ({
@@ -200,7 +199,7 @@ const AttendanceCard = ({...props}) => {
                         onClose={handleClose}
                         TransitionComponent={Fade}
                     >
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}><Link to={{pathname:'/addNote',state:{id:props.data.id}}} className={classes.link}>Add Note</Link></MenuItem>
+                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Add Reminder</MenuItem>
                         <MenuItem className={classes.SubMenuItem} onClick={handleResetCard}>Reset Card</MenuItem>
                         <MenuItem onClick={handleDeleteCard} className={classes.SubMenuItem}>Delete Card</MenuItem>
                     </Menu>
