@@ -11,6 +11,7 @@ import AccountPage from './pages/AccountPage';
 import NotesPage from './pages/NotesPage';
 import SchedulePage from './pages/SchedulePage';
 import {auth, createUserProfileDocument} from './firebase.js'
+import NotePage from './pages/NotePage'
 
 const useStyles = makeStyles({
   container: {
@@ -49,6 +50,7 @@ const App = () => {
           <Route path="/notes" exact component={NotesPage} />
           <Route path="/schedule" exact component={SchedulePage} />
           <Route path="/account" exact component={AccountPage} />
+          <Route path="/noteDesc" exact component={NotePage} />
           <Route path="*" render={() => <Redirect to='/attendance' />} />
         </Switch>
       </HashRouter>
