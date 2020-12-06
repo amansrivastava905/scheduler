@@ -2,14 +2,12 @@ import React, { useState, useEffect }  from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import styled from 'styled-components';
-import DeleteIcon from '@material-ui/icons/Delete';
-import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
 import Paper from '@material-ui/core/Paper';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import CheckCircleOutlineSharpIcon from '@material-ui/icons/CheckCircleOutlineSharp';
+import database from '../../firebase';
 
 const useStyles = makeStyles({
     container: {
@@ -18,12 +16,17 @@ const useStyles = makeStyles({
         padding: '10px',
         margin: '5px 0px',
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        minWidth:'80%'
     }
 });
 
 
-const NoteCard = () => {
+const NoteCard = (props) => {
+
+    const data = {
+        noteDesc: props.data.noteDesc
+      }
 
     const classes = useStyles();
     // state for material component
@@ -39,11 +42,16 @@ const NoteCard = () => {
         setAnchorEl(null);
     };
 
+    const handleDeleteNotebook = () => {
+        database.ref(`users/${props.uid}/Notebooks/${props.data.parentNotebookRef}/Notes/${props.data.id}`).remove();
+        handleClose();
+      }
+
     return (
          <Paper elevation={1} className={classes.container}>
             <TextContainer>
                 <Text>
-                   Title of my note goes here. It can be large enough as you can see
+                   {data.noteDesc}
                 </Text>
             </TextContainer>
             <ButtonsContainer>
@@ -59,7 +67,7 @@ const NoteCard = () => {
                         TransitionComponent={Fade}
                     >
                         <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Edit</MenuItem>
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem} >delete</MenuItem>
+                        <MenuItem className={classes.SubMenuItem} onClick={handleDeleteNotebook} >delete</MenuItem>
                     </Menu>
             </ButtonsContainer>
         </Paper>

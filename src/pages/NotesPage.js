@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
@@ -14,6 +14,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -26,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
         zIndex: '200',
         top: '75vh',
         left: '75vw'
+    },
+    loader:{
+        display:'flex',
+        justifyContent:'center'
     }
 }));
 
@@ -75,7 +80,37 @@ const NotesPage = () => {
         handleClose();
     }
 
+    // show notebooks
+    const [Notebooks, setNotebooks] = useState([]);
+    const [user, setUser] = useState(false);
+    useEffect(() => {
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
 
+                database.ref(`users/${user.uid}/Notebooks`).on('value', (snapshot) => {
+                    const array = [];
+                    snapshot.forEach((childSnap) => {
+                        array.push({
+                            id: childSnap.key,
+                            ...childSnap.val()
+                        })
+                    })
+
+                    const finalArr = array.slice(0).reverse().map((e) => {
+                        return <Notebook key={e.id} data={e} uid={user.uid} />
+                    })
+
+                    setNotebooks(finalArr);
+                    setUser(true);
+                })
+            }
+        })
+
+        return unsubscribe
+
+    }, [])
+
+    
 
     return (
         <div className={classes.container}>
@@ -84,10 +119,20 @@ const NotesPage = () => {
                 <AddIcon />
             </Fab>
             <NotebookContainer>
-                <Notebook />
-                <Notebook />
-                <Notebook />
-                <Notebook />
+                {
+                    (user === false)
+                        ? (<div className={classes.loader}>
+                            <CircularProgress />
+                        </div>)
+                        : ((Notebooks.length === 0)
+                            ? (<div>
+                                    <Typography variant="h2" color="primary" align="center">No Notebook</Typography>
+                                    <Typography variant="h5" color="textSecondary" align="center">Get started by adding a new notebook</Typography>
+                                </div>
+                            )
+                            : Notebooks)
+                    
+                }
             </NotebookContainer>
 
             <Dialog open={openDialog} onClose={handleClose} aria-labelledby="form-dialog-title">
