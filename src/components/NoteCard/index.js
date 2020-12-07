@@ -1,4 +1,4 @@
-import React, { useState, useEffect }  from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import styled from 'styled-components';
@@ -8,16 +8,23 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import database from '../../firebase';
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles({
     container: {
-        background:'rgb(255,255,250)',
+        background: 'rgb(255,255,250)',
         borderRadius: '3px',
         padding: '10px',
         margin: '5px 0px',
         display: 'flex',
         justifyContent: 'space-between',
-        minWidth:'80%'
+        minWidth: '80%'
+    },
+    LinkStyle: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        textDecoration: 'none'
     }
 });
 
@@ -25,8 +32,9 @@ const useStyles = makeStyles({
 const NoteCard = (props) => {
 
     const data = {
-        noteDesc: props.data.noteDesc
-      }
+        noteDesc: props.data.noteDesc,
+        notebookName:props.data.notebookName
+    }
 
     const classes = useStyles();
     // state for material component
@@ -45,30 +53,42 @@ const NoteCard = (props) => {
     const handleDeleteNotebook = () => {
         database.ref(`users/${props.uid}/Notebooks/${props.data.parentNotebookRef}/Notes/${props.data.id}`).remove();
         handleClose();
-      }
+    }
 
     return (
-         <Paper elevation={1} className={classes.container}>
-            <TextContainer>
-                <Text>
-                   {data.noteDesc}
-                </Text>
-            </TextContainer>
+        <Paper elevation={1} className={classes.container}>
+            <Link to={{
+                pathname: '/noteDesc',
+                noteProps:{
+                    noteTitle:data.noteDesc,
+                    noteRefId:props.data.id,
+                    notebookRefId:props.data.parentNotebookRef,
+                    notebookName:data.notebookName
+                }
+            }} className={classes.LinkStyle}>
+                <TextContainer>
+
+                    <Text>
+                        {data.noteDesc}
+                    </Text>
+
+                </TextContainer>
+            </Link>
             <ButtonsContainer>
-            <IconButton aria-label="3 dot menu" onClick={handleClick}>
-                        <MoreVertIcon className={classes.IconButton} />
-                    </IconButton>
-                    <Menu
-                        id="fade-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={open}
-                        onClose={handleClose}
-                        TransitionComponent={Fade}
-                    >
-                        <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Edit</MenuItem>
-                        <MenuItem className={classes.SubMenuItem} onClick={handleDeleteNotebook} >delete</MenuItem>
-                    </Menu>
+                <IconButton aria-label="3 dot menu" onClick={handleClick}>
+                    <MoreVertIcon className={classes.IconButton} />
+                </IconButton>
+                <Menu
+                    id="fade-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={open}
+                    onClose={handleClose}
+                    TransitionComponent={Fade}
+                >
+                    <MenuItem onClick={handleClose} className={classes.SubMenuItem}>Edit</MenuItem>
+                    <MenuItem className={classes.SubMenuItem} onClick={handleDeleteNotebook} >delete</MenuItem>
+                </Menu>
             </ButtonsContainer>
         </Paper>
     )

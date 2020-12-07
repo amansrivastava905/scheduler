@@ -7,6 +7,8 @@ import database from '../firebase';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
+import firebase from 'firebase';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles({
     container: {
@@ -16,42 +18,97 @@ const useStyles = makeStyles({
         padding: '20px 5px',
         width: '100%'
     },
-    header:{
-        padding:'20px 10px',
-        background:'#eeeeee',
-        borderRadius:'5px'
+    header: {
+        padding: '20px 10px',
+        background: '#eeeeee',
+        borderRadius: '5px'
     },
-    button:{
-        width:'200px'
+    button: {
+        width: '200px'
     },
-    buttonContainer:{
-        display:'flex',
-        justifyContent:'center',
-        position:'fixed',
-        top:'75vh',
-        width:'100%'
+    buttonContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        position: 'fixed',
+        top: '80vh',
+        width: '100%',
+        zIndex: '1000'
     }
 });
 
 
-const NotePage = () => {
+const NotePage = (props) => {
 
     const classes = useStyles();
-    var data={};
+    const [user,setUser]=useState(false);
+
+    var propData;
+    if (props.location.noteProps) {
+        localStorage.setItem('routeState', JSON.stringify(props.location.noteProps));
+        propData = JSON.parse(localStorage.getItem('routeState'));
+    }
+    else {
+        propData = JSON.parse(localStorage.getItem('routeState'));
+    }
+
+
+    const [data, setData] = useState({ ...propData });
+    const [noteText, setNoteText] = useState({});
+    useEffect(() => {
+        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+
+                database.ref(`users/${user.uid}/Notebooks/${data.notebookRefId}/Notes/${data.noteRefId}/NoteData`).on('value', (snapshot) => {
+                    setNoteText(snapshot.val());
+                    setUser(true);
+                })
+            }
+        })
+        return unsubscribe
+    }, [])
+
+    const instanceRef = React.useRef(null);
+
+    const handleSaveNote = async () => {
+
+        
+        const savedData = await instanceRef.current.save();
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+
+                database.ref(`users/${user.uid}/Notebooks/${data.notebookRefId}/Notes/${data.noteRefId}/NoteData`).set(savedData)
+                    .then(() => {
+
+                    })
+            } else return null
+        })
+    }
 
     return (
         <div className={classes.container}>
             <div className={classes.header}>
-                <Typography variant="h5" color="Primary" align="center">Working on this feature</Typography>
+                <Typography variant="h5" color="primary" align="center">{data.noteTitle}</Typography>
             </div>
             <div className={classes.EditorContainer}>
-                <EditorJs data={data} tools={EDITOR_JS_TOOLS} placeholder='your Note goes here...' />
+                {
+                    (user)
+                        ? (<EditorJs instanceRef={instance => (instanceRef.current = instance)} data={noteText} tools={EDITOR_JS_TOOLS} placeholder='your Note goes here...' onChange={handleSaveNote} />)
+                        :(<LoaderContainer>
+                            <CircularProgress/>
+                        </LoaderContainer>)
+                }
             </div>
             <div className={classes.buttonContainer}>
-                <Button className={classes.button} variant='contained' color='primary' startIcon={<SaveIcon/>} size='medium' fullWidth='true'>Save</Button>
+                <Button className={classes.button} variant='contained' color='primary' startIcon={<SaveIcon />} size='medium' onClick={handleSaveNote}>Save</Button>
             </div>
         </div>
     )
 }
 
 export default NotePage
+
+
+const LoaderContainer = styled.div`
+    display:flex;
+    justify-content:center;
+`

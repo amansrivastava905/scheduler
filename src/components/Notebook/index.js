@@ -111,6 +111,7 @@ export default function Notebook(props) {
             array.push({
               id: childSnap.key,
               parentNotebookRef:props.data.id,
+              parentNotebookName:props.data.notebookName,
               ...childSnap.val()
             })
           })
