@@ -185,27 +185,35 @@ const LoaderContainer = styled.div`
 export const SignUp = () => {
   const classes = useStyles();
 
-  const [displayName, setDisplayName] = useState(null);
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async event => {
     event.preventDefault();
+    setLoading(true);
 
     if(password !== confirmPassword){
-      alert("Passwords don't match");
+      alert("password fields dont match");
+      setLoading(false);
       return
     }
 
     try {
-      auth.createUserWithEmailAndPassword(email, password).then(auth.signOut());
-      setDisplayName(null)
+      auth.createUserWithEmailAndPassword(email, password).then(()=>{
+        auth.signOut();
+        setLoading(false);
+      }).catch((error)=>{alert(error.message); setLoading(false);});
+      setDisplayName("")
       setEmail("")
       setPassword("")
+      setConfirmPassword("");
 
     } catch(error) {
-      console.log(error);
+      alert("some error occured ---"+error);
+      setLoading(false);
     }
   }
 
@@ -228,7 +236,9 @@ export const SignUp = () => {
 
 
   return (
-    <Slide direction="left" in={true} mountOnEnter unmountOnExit>
+    (loading===false)
+    ?(
+      <Slide direction="left" in={true} mountOnEnter unmountOnExit>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
@@ -248,6 +258,7 @@ export const SignUp = () => {
                   fullWidth
                   id="Display Name"
                   label="Display Name"
+                  value={displayName}
                   onChange={handleDisplayName}
                 />
               </Grid>
@@ -260,6 +271,7 @@ export const SignUp = () => {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  value={email}
                   onChange={handleEmail}
                 />
               </Grid>
@@ -272,6 +284,7 @@ export const SignUp = () => {
                   label="Password"
                   type="password"
                   id="password"
+                  value={password}
                   onChange={handlePassword}
                 />
               </Grid>
@@ -284,6 +297,7 @@ export const SignUp = () => {
                   label="Confirm Password"
                   type="password"
                   id="Confirm Password"
+                  value={confirmPassword}
                   onChange={handleConfirmPassword}
                 />
               </Grid>
@@ -311,5 +325,7 @@ export const SignUp = () => {
         </div>
       </Container>
     </Slide>
+    )
+    :(<LoaderContainer><CircularProgress/></LoaderContainer>)
   );
 }

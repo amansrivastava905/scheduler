@@ -30,8 +30,16 @@ const AccountPage = () => {
                 // User is signed in.
                 setUserName(user.displayName);
                 setUserEmail(user.email);
-                setUserImage(user.photoURL);
                 setUserDetail(true);
+
+                if(user.photoURL)
+                {
+                    setUserImage(user.photoURL);
+                }
+                else
+                {
+                    setUserImage(ProfileImg);
+                }
             } else {
                 // No user is signed in.
                 setUserName("please sign in to your account");

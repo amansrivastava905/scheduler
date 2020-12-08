@@ -35,7 +35,7 @@ var firebaseConfig = {
                 ...additionalData
             })
         } catch (error) {
-            console.log('error creating user', error.code);
+            alert('error creating user', error.code);
         }
     };
 

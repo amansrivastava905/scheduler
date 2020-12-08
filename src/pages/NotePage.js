@@ -7,6 +7,7 @@ import database from '../firebase';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
+import EditIcon from '@material-ui/icons/Edit';
 import firebase from 'firebase';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -24,13 +25,13 @@ const useStyles = makeStyles({
         borderRadius: '5px'
     },
     button: {
-        width: '200px'
+        width: '100px'
     },
     buttonContainer: {
         display: 'flex',
         justifyContent: 'center',
         position: 'fixed',
-        top: '80vh',
+        top: '83vh',
         width: '100%',
         zIndex: '1000'
     }
@@ -92,14 +93,11 @@ const NotePage = (props) => {
             <div className={classes.EditorContainer}>
                 {
                     (user)
-                        ? (<EditorJs instanceRef={instance => (instanceRef.current = instance)} data={noteText} tools={EDITOR_JS_TOOLS} placeholder='your Note goes here...' onChange={handleSaveNote} />)
+                        ? (<EditorJs  toggleReadonly='true' instanceRef={instance => (instanceRef.current = instance)} data={noteText} tools={EDITOR_JS_TOOLS} placeholder='Write your note here. It gets saved automatically...' onChange={handleSaveNote} />)
                         :(<LoaderContainer>
                             <CircularProgress/>
                         </LoaderContainer>)
                 }
-            </div>
-            <div className={classes.buttonContainer}>
-                <Button className={classes.button} variant='contained' color='primary' startIcon={<SaveIcon />} size='medium' onClick={handleSaveNote}>Save</Button>
             </div>
         </div>
     )
